@@ -1,0 +1,170 @@
+{
+  "passed": [
+    {
+      "element": "Node Palette - Start",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.557Z"
+    },
+    {
+      "element": "Node Palette - Agent",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.560Z"
+    },
+    {
+      "element": "Node Palette - Transform",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.563Z"
+    },
+    {
+      "element": "Node Palette - While",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.567Z"
+    },
+    {
+      "element": "Node Palette - End",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.571Z"
+    },
+    {
+      "element": "Node Palette - Guardrails",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.574Z"
+    },
+    {
+      "element": "Node Palette - Note",
+      "status": "PASS",
+      "details": "Node type visible and clickable",
+      "timestamp": "2025-10-10T00:18:59.579Z"
+    },
+    {
+      "element": "Workflow - Run Button",
+      "status": "PASS",
+      "details": "Run button is enabled",
+      "timestamp": "2025-10-10T00:23:32.917Z"
+    },
+    {
+      "element": "Workflow - Save Button",
+      "status": "PASS",
+      "details": "Save button clickable",
+      "timestamp": "2025-10-10T00:23:33.540Z"
+    }
+  ],
+  "failed": [
+    {
+      "element": "Node Palette - If/Else",
+      "status": "FAIL",
+      "details": "Node type not visible",
+      "timestamp": "2025-10-10T00:18:59.564Z"
+    },
+    {
+      "element": "Node Palette - Set State",
+      "status": "FAIL",
+      "details": "Node type not visible",
+      "timestamp": "2025-10-10T00:18:59.569Z"
+    },
+    {
+      "element": "Node Palette - File Search",
+      "status": "FAIL",
+      "details": "Node type not visible",
+      "timestamp": "2025-10-10T00:18:59.572Z"
+    },
+    {
+      "element": "Node Palette - User Approval",
+      "status": "FAIL",
+      "details": "Node type not visible",
+      "timestamp": "2025-10-10T00:18:59.576Z"
+    },
+    {
+      "element": "Node Palette - Voice",
+      "status": "FAIL",
+      "details": "Node type not visible",
+      "timestamp": "2025-10-10T00:18:59.578Z"
+    },
+    {
+      "element": "Node Palette - MCP Expand",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=\"MCP Servers\"').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:19:29.682Z"
+    },
+    {
+      "element": "Inspector - Agent Name Input",
+      "status": "FAIL",
+      "details": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"text\"]').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:20:00.426Z"
+    },
+    {
+      "element": "Inspector - Agent Instructions",
+      "status": "FAIL",
+      "details": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('textarea').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:20:30.527Z"
+    },
+    {
+      "element": "Inspector - Model Dropdown",
+      "status": "FAIL",
+      "details": "No models available",
+      "timestamp": "2025-10-10T00:20:30.528Z"
+    },
+    {
+      "element": "Inspector - Chat History Toggle",
+      "status": "FAIL",
+      "details": "locator.isChecked: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[type=\"checkbox\"]').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:21:00.530Z"
+    },
+    {
+      "element": "Inspector - More Options Button",
+      "status": "FAIL",
+      "details": "Button visible but does nothing - NO HANDLER",
+      "timestamp": "2025-10-10T00:21:01.156Z"
+    },
+    {
+      "element": "Transform Node",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('.react-flow__node:has-text(\"Transform\")').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:21:32.508Z"
+    },
+    {
+      "element": "If/Else Node",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=\"If/Else\"').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:22:02.610Z"
+    },
+    {
+      "element": "Voice Node",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=\"Voice\"').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:22:32.711Z"
+    },
+    {
+      "element": "MCP Node",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=\"MCP Servers\"').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:23:02.812Z"
+    },
+    {
+      "element": "Set State Node",
+      "status": "FAIL",
+      "details": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('text=\"Set State\"').first()\u001b[22m\n",
+      "timestamp": "2025-10-10T00:23:32.913Z"
+    }
+  ],
+  "warnings": [
+    {
+      "element": "Inspector - Reasoning Effort",
+      "status": "WARN",
+      "details": "Dropdown hidden or not found",
+      "timestamp": "2025-10-10T00:21:00.531Z"
+    },
+    {
+      "element": "Inspector - Add Tool Button",
+      "status": "WARN",
+      "details": "Button hidden (expected after Day 1 fix)",
+      "timestamp": "2025-10-10T00:21:00.532Z"
+    }
+  ]
+}

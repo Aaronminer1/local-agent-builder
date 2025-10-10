@@ -1,0 +1,217 @@
+{
+  "passed": [
+    {
+      "element": "Top Bar - Back to Workflows",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:31.475Z"
+    },
+    {
+      "element": "Top Bar - Version Dropdown",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:31.479Z"
+    },
+    {
+      "element": "Top Bar - Version Dropdown Click",
+      "status": "PASS",
+      "details": "Click successful",
+      "timestamp": "2025-10-10T00:45:32.094Z"
+    },
+    {
+      "element": "Top Bar - Test Audio",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.098Z"
+    },
+    {
+      "element": "Top Bar - Save Workflow",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.101Z"
+    },
+    {
+      "element": "Top Bar - Settings",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.104Z"
+    },
+    {
+      "element": "Top Bar - Settings Click",
+      "status": "PASS",
+      "details": "Click successful",
+      "timestamp": "2025-10-10T00:45:32.725Z"
+    },
+    {
+      "element": "Top Bar - Evaluate",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.728Z"
+    },
+    {
+      "element": "Top Bar - Code View",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.731Z"
+    },
+    {
+      "element": "Top Bar - Run Workflow",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.734Z"
+    },
+    {
+      "element": "Top Bar - Deploy",
+      "status": "PASS",
+      "details": "Button visible and enabled",
+      "timestamp": "2025-10-10T00:45:32.736Z"
+    },
+    {
+      "element": "Node Selection",
+      "status": "PASS",
+      "details": "Can select nodes",
+      "timestamp": "2025-10-10T00:45:33.370Z"
+    },
+    {
+      "element": "Inspector Panel",
+      "status": "PASS",
+      "details": "Inspector appears on node selection",
+      "timestamp": "2025-10-10T00:45:33.372Z"
+    },
+    {
+      "element": "Inspector - Input Fields",
+      "status": "PASS",
+      "details": "Found 0 visible inputs",
+      "timestamp": "2025-10-10T00:45:33.374Z"
+    },
+    {
+      "element": "Inspector - Text Areas",
+      "status": "PASS",
+      "details": "Found 0 visible textareas",
+      "timestamp": "2025-10-10T00:45:33.375Z"
+    },
+    {
+      "element": "Inspector - Dropdowns",
+      "status": "PASS",
+      "details": "Found 0 visible dropdowns",
+      "timestamp": "2025-10-10T00:45:33.376Z"
+    },
+    {
+      "element": "Inspector - Buttons",
+      "status": "PASS",
+      "details": "Found 9 inspector buttons: ←View all workflows, v1 · draft, 🔊Test Audio, 💾Save, ⚙, 📊Evaluate, </>Code, +Add variable, More options",
+      "timestamp": "2025-10-10T00:45:33.393Z"
+    },
+    {
+      "element": "Canvas - Node Dragging",
+      "status": "PASS",
+      "details": "Can drag nodes",
+      "timestamp": "2025-10-10T00:45:34.133Z"
+    },
+    {
+      "element": "Canvas - Panning",
+      "status": "PASS",
+      "details": "Can pan canvas",
+      "timestamp": "2025-10-10T00:45:34.447Z"
+    },
+    {
+      "element": "Node Type - Agent Node",
+      "status": "PASS",
+      "details": "Agent Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:35.079Z"
+    },
+    {
+      "element": "Node Type - Transform/Data Node",
+      "status": "PASS",
+      "details": "Transform/Data Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:35.705Z"
+    },
+    {
+      "element": "Node Type - If/Else Node",
+      "status": "PASS",
+      "details": "If/Else Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:36.343Z"
+    },
+    {
+      "element": "Node Type - MCP Node",
+      "status": "PASS",
+      "details": "MCP Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:36.977Z"
+    },
+    {
+      "element": "Node Type - While Loop",
+      "status": "PASS",
+      "details": "While Loop exists and is selectable",
+      "timestamp": "2025-10-10T00:45:37.605Z"
+    },
+    {
+      "element": "Node Type - Voice Node",
+      "status": "PASS",
+      "details": "Voice Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:38.245Z"
+    },
+    {
+      "element": "Node Type - User Approval",
+      "status": "PASS",
+      "details": "User Approval exists and is selectable",
+      "timestamp": "2025-10-10T00:45:38.872Z"
+    },
+    {
+      "element": "Node Type - Note Node",
+      "status": "PASS",
+      "details": "Note Node exists and is selectable",
+      "timestamp": "2025-10-10T00:45:39.503Z"
+    },
+    {
+      "element": "Workflow - Run Button",
+      "status": "PASS",
+      "details": "Run button is enabled",
+      "timestamp": "2025-10-10T00:45:39.506Z"
+    },
+    {
+      "element": "Workflow - Save",
+      "status": "PASS",
+      "details": "Save button clicked",
+      "timestamp": "2025-10-10T00:45:40.130Z"
+    }
+  ],
+  "failed": [],
+  "warnings": [
+    {
+      "element": "Node Palette - ▶Core",
+      "status": "WARN",
+      "details": "Section not found",
+      "timestamp": "2025-10-10T00:45:32.738Z"
+    },
+    {
+      "element": "Node Palette - ▶Tools",
+      "status": "WARN",
+      "details": "Section not found",
+      "timestamp": "2025-10-10T00:45:32.739Z"
+    },
+    {
+      "element": "Node Palette - ▶Logic",
+      "status": "WARN",
+      "details": "Section not found",
+      "timestamp": "2025-10-10T00:45:32.740Z"
+    },
+    {
+      "element": "Node Palette - ▶Data",
+      "status": "WARN",
+      "details": "Section not found",
+      "timestamp": "2025-10-10T00:45:32.741Z"
+    },
+    {
+      "element": "Canvas - Mini Map",
+      "status": "WARN",
+      "details": "Mini Map not found",
+      "timestamp": "2025-10-10T00:45:33.395Z"
+    },
+    {
+      "element": "Workflow - Execution",
+      "status": "WARN",
+      "details": "Skipping actual execution to avoid side effects",
+      "timestamp": "2025-10-10T00:45:39.506Z"
+    }
+  ]
+}
