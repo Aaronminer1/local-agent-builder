@@ -1,327 +1,203 @@
-# Local Agent Builder Project
+# 🤖 Local Agent Builder v2.0.0 - Tool Use Revolution
 
-> A complete local alternative to OpenAI's Agent Builder using open-source tools
+A visual workflow builder for creating AI agents with **real tool use capabilities** that run entirely on your local machine using Ollama.
 
-## 🎯 Project Overview
+## 🚀 **NEW in v2.0.0: Local Models Can Use Tools!**
 
-This project provides a **fully local, open-source alternative** to OpenAI's Agent Builder. Build sophisticated AI agent workflows using a visual drag-and-drop interface, powered by local LLMs via Ollama - no cloud dependencies, no API costs, complete privacy.
+**BREAKTHROUGH:** We've successfully implemented tool use for local models! Local LLMs can now access external data and perform real actions.
+
+### 🔥 **Tool Use Capabilities:**
+- ✅ **Real external data access** via Wikipedia API
+- ✅ **Multi-turn tool conversations** with context preservation  
+- ✅ **Verified with 2025 data** that no training could contain
+- ✅ **Tool-capable models**: gpt-oss:20b, llama3.1:8b, qwen, deepseek
+
+## ✨ Features
+
+- **Visual Workflow Builder**: Drag-and-drop interface for creating AI agent workflows
+- **🔧 Tool-Enabled Agents**: Local models can now use tools to access external information
+- **🌐 Real Web Search**: Agents can fetch current data from Wikipedia API
+- **Local AI Models**: Powered by Ollama - no API keys or cloud dependencies
+- **Real-time Execution**: Watch your workflows run with live logging
+- **Multiple Node Types**: Agent, Logic, Data transformation, and more
+- **State Management**: Pass data between workflow nodes
+- **Audio Output**: Text-to-speech for agent responses
+- **Workflow Management**: Save, load, and organize your workflows
+
+## 🔧 **Tool Use Examples:**
+
+### **Research Agent:**
+```
+User: "What happened in the 2024 Nobel Prize announcements?"
+Agent: *searches Wikipedia* → Returns real 2024 Nobel Prize information
+```
+
+### **Current Events:**
+```
+User: "What were the major news headlines on October 1, 2025?"
+Agent: *searches Wikipedia* → Returns 2025 British cabinet reshuffle, MLB season info
+```
+
+### **Fact Checking:**
+```
+User: "What is quantum computing?"
+Agent: *searches Wikipedia* → Returns sourced, current information with URLs
+```
+
+### For Developers:
+- **[dev/TODO.md](./dev/TODO.md)** - ⭐ Current tasks and priorities
+- **[dev/CHANGELOG.md](./dev/CHANGELOG.md)** - All changes
+- **[dev/bugs/](./dev/bugs/)** - Active bug reports
+- **[dev/testing/](./dev/testing/)** - Test results
+- **[dev/planning/](./dev/planning/)** - Planning docs
+- **[QUICKSTART.md](./QUICKSTART.md)** - Setup guide
+- **[docs/](./docs/)** - User documentation
+
+### Reference:
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture
+- **[CODEBASE_AUDIT.md](./CODEBASE_AUDIT.md)** - Code audit results
+- **[openai-agent-builder-docs.md](./openai-agent-builder-docs.md)** - OpenAI reference
+- **[UI_UX_SPECIFICATION.md](./UI_UX_SPECIFICATION.md)** - UI/UX spec
+
+---
+
+## 🎯 Current Status
+
+**Version:** 0.2.0-dev  
+**Status:** 🟡 Partially Functional  
+**Completion:** 65%
+
+### ✅ Working:
+- All 13 node types render
+- Tool selection UI
+- Input panel UI
+- Save/load workflows
+
+### 🔴 Critical Bugs:
+1. **Input state doesn't sync** - Can't execute workflows
+2. **Tools don't execute** - Tools are cosmetic only
+
+**See:** [docs/CURRENT_STATUS.md](./docs/CURRENT_STATUS.md) for details
+
+---
 
 ## 📁 Project Structure
 
 ```
 local-agent-builder/
-├── agentic-signal/                      # Main application (cloned from code-forge-temple)
-│   ├── client/                          # React + Vite frontend
-│   ├── server/                          # Deno GraphQL backend
-│   ├── shared/                          # Shared TypeScript types
-│   ├── docs/                            # Docusaurus documentation site
-│   └── src-tauri/                       # Desktop app wrapper (Tauri)
+├── README.md                           # This file
+├── QUICKSTART.md                       # Setup guide
+├── CHANGELOG.md                        # All changes
 │
-├── openai-agent-builder-docs.md         # Complete OpenAI Agent Builder documentation
-├── agentic-signal-setup.md              # Setup and installation guide
-├── agent-builder-clone-summary.md       # Project summary and comparison
-└── README.md                            # This file
+├── docs/                               # 📚 Main documentation
+│   ├── CURRENT_STATUS.md              # ⭐ Start here
+│   ├── TESTING.md                     # Test results & bugs
+│   ├── IMPLEMENTATION.md              # Implementation guide
+│   ├── REFERENCE.md                   # OpenAI comparison
+│   └── archive/                       # Old docs (reference only)
+│
+├── agent-builder/                      # 🎨 Main application
+│   ├── src/                           # Source code
+│   │   ├── components/                # React components
+│   │   ├── pages/                     # Page components
+│   │   ├── services/                  # Business logic
+│   │   └── data/                      # Data/constants
+│   └── ...
+│
+├── CRITICAL_BUGS_FOUND.md             # ⚠️ Active bugs
+├── TOOL_INTEGRATION_GAP.md            # Tool execution gap
+│
+└── Reference docs (see above)
 ```
-
-## ✨ Key Features
-
-### Visual Workflow Builder
-- 🎨 Drag-and-drop canvas built with React Flow
-- 🔗 Node-based architecture for composing workflows
-- 👁️ Real-time execution and debugging
-- 📊 Live data flow visualization
-
-### Local AI Intelligence
-- 🤖 **Ollama Integration** - Run LLaMA, Gemma, and other models locally
-- 🛠️ **Tool Calling** - AI agents can execute functions and access APIs
-- 📝 **Structured Output** - JSON schema validation for reliability
-- 💭 **Conversation Memory** - Maintain context across executions
-- 🔒 **100% Private** - All processing happens on your machine
-
-### Rich Node Library
-- **Core**: Start, Agent, Note nodes
-- **Tools**: File Search, Guardrails, MCP integrations
-- **Logic**: If/Else, While loops, Human Approval
-- **Data**: Transform, Set State for data manipulation
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-All dependencies are already installed:
-- ✅ Bun (v1.2.22) - JavaScript runtime
-- ✅ Deno (v2.5.3) - TypeScript/JavaScript runtime  
-- ✅ Ollama - Local LLM runtime
-- ✅ LLaMA 3.2 (3B) model downloaded
-
-### Running the Application
-
-**Terminal 1 - Backend Server:**
-```bash
-cd ~/vscode_Projects/local-agent-builder/agentic-signal
-export PATH="$HOME/.deno/bin:$PATH"
-bun run server:dev
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd ~/vscode_Projects/local-agent-builder/agentic-signal
-bun run client:dev
-```
-
-**Access the app at:** http://localhost:5173
-
-### Verify Ollama
-
-```bash
-# List installed models
-ollama list
-
-# Test a model
-ollama run llama3.2:3b "Hello! Please introduce yourself."
-```
-
-## 📚 Documentation
-
-1. **[OpenAI Agent Builder Docs](./openai-agent-builder-docs.md)** - Complete reference documentation from OpenAI
-2. **[Setup Guide](./agentic-signal-setup.md)** - Detailed installation and configuration instructions
-3. **[Project Summary](./agent-builder-clone-summary.md)** - Feature comparison and architecture overview
-4. **[Online Docs](https://code-forge-temple.github.io/agentic-signal/)** - Official Agentic Signal documentation
-
-## 🎨 Creating Your First Workflow
-
-### Example: Simple Q&A Agent
-
-1. **Add Start Node** - Define user input
-2. **Add Agent Node** - Configure with:
-   - Model: `llama3.2:3b`
-   - Instructions: "You are a helpful assistant. Answer questions clearly and concisely."
-3. **Connect Nodes** - Drag from Start to Agent
-4. **Test** - Click Preview and enter a question
-
-### Example: Homework Helper (from OpenAI docs)
-
-```
-[Start: User Question]
-    ↓
-[Agent: Rewrite Question]
-    ↓
-[Agent: Classify Question Type]
-    ↓
-[If/Else: Route by Type]
-    ├─→ [Agent: Q&A Handler]
-    └─→ [Agent: Research Handler]
-         ↓
-    [Transform: Format Output]
-         ↓
-    [Output]
-```
-
-## 🔧 Development Commands
-
-### Client (Frontend)
-```bash
-bun run client:dev          # Development server
-bun run client:build        # Production build
-bun run client:preview      # Preview production build
-```
-
-### Server (Backend)
-```bash
-bun run server:dev          # Development server
-bun run server:build        # Compile binary
-```
-
-### Desktop App (Optional)
-```bash
-bun run dev:linux           # Run desktop app (dev)
-bun run build:linux         # Build desktop app
-```
-
-### Maintenance
-```bash
-bun run lint                # Check code quality
-bun run lint:fix            # Auto-fix issues
-```
-
-## 🆚 Comparison with OpenAI Agent Builder
-
-| Feature | OpenAI Agent Builder | This Project (Agentic Signal) |
-|---------|---------------------|-------------------------------|
-| Visual Workflow | ✅ | ✅ |
-| Node Types | ✅ All types | ✅ All types |
-| AI Models | GPT-4/5 (Cloud) | Any Ollama model (Local) |
-| Privacy | ❌ Cloud processing | ✅ 100% Local |
-| Cost | 💰 Per API call | ✅ Free |
-| Internet Required | ✅ Yes | ❌ Works offline |
-| Open Source | ❌ Proprietary | ✅ AGPL v3 |
-| Customization | Limited | Full control |
-| Data Storage | Cloud | Your machine |
-
-## 🔐 Privacy & Security
-
-- **No cloud dependencies** - Everything runs locally
-- **No telemetry** - Your data never leaves your machine
-- **Open source** - Audit the entire codebase
-- **Local models** - AI processing happens on your hardware
-- **Offline capable** - No internet required after setup
-
-## 🎓 Learning Resources
-
-### Tutorials
-- [Adding New Tools](./agentic-signal/ADD_NEW_TOOLS.md)
-- [Contributing Guide](./agentic-signal/CONTRIBUTING.md)
-- [Node Reference](https://code-forge-temple.github.io/agentic-signal/docs/nodes/overview)
-
-### Community
-- **Discord**: https://discord.gg/HZPEbJM8
-- **Reddit**: r/AgenticSignal
-- **GitHub**: https://github.com/code-forge-temple/agentic-signal
-
-## 🛠️ Advanced Usage
-
-### Adding Custom Nodes
-
-1. Define node type in `shared/types/nodes.ts`
-2. Create component in `client/components/nodes/`
-3. Implement executor in `server/executors/`
-4. Register in node palette
-
-### Integrating External APIs
-
-Use MCP (Model Context Protocol) nodes to connect:
-- Gmail, Google Calendar
-- Discord, Slack
-- Notion, Airtable
-- Custom REST APIs
-
-### Building Desktop App
-
-```bash
-# Install Rust (if not already installed)
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-
-# Build for Linux
-bun run build:linux
-
-# Find the built app in:
-# src-tauri/target/release/bundle/
-```
-
-## 🐛 Troubleshooting
-
-### Ports Already in Use
-```bash
-# Kill frontend (port 5173)
-lsof -ti:5173 | xargs kill -9
-
-# Kill backend (port 8000)
-lsof -ti:8000 | xargs kill -9
-
-# Kill Ollama (port 11434)
-lsof -ti:11434 | xargs kill -9
-```
-
-### Ollama Issues
-```bash
-# Check status
-systemctl status ollama
-
-# Restart service
-sudo systemctl restart ollama
-
-# Test connection
-curl http://localhost:11434/api/tags
-```
-
-### Build Errors
-```bash
-cd ~/vscode_Projects/local-agent-builder/agentic-signal
-rm -rf node_modules client/node_modules
-bun install
-cd client && bun install
-```
-
-## 🎯 Use Cases
-
-- **Customer Support Automation** - Build chatbots that route queries
-- **Research Assistants** - Multi-step research workflows
-- **Data Processing Pipelines** - Transform and analyze data
-- **Content Generation** - Blog posts, summaries, reports
-- **Code Review Agents** - Automated code analysis
-- **Email Automation** - Smart email routing and responses
-
-## 📊 Performance
-
-### Recommended Models
-
-- **LLaMA 3.2 (3B)** ⚡ - Fast, good for testing (currently installed)
-- **LLaMA 3.1 (8B)** ⚖️ - Balanced quality/speed
-- **LLaMA 3.3 (70B)** 🚀 - Best quality (requires powerful GPU)
-
-**Your system**: NVIDIA GPU detected - GPU acceleration enabled!
-
-### Download Additional Models
-
-```bash
-# Faster, smaller model
-ollama pull llama3.2:1b
-
-# Better quality
-ollama pull llama3.1:8b
-
-# Code-specialized
-ollama pull codellama:7b
-
-# Multi-modal (vision)
-ollama pull llava:7b
-```
-
-## 🚧 Roadmap
-
-- [ ] Implement all OpenAI Agent Builder node types
-- [ ] Add vector database integration for RAG
-- [ ] Build template library
-- [ ] Create workflow marketplace
-- [ ] Add collaboration features
-- [ ] Implement workflow versioning
-- [ ] Build mobile app
-
-## 📝 License
-
-**Agentic Signal** uses a dual-license model:
-- **AGPL v3** - Free for personal, educational, non-commercial use
-- **Commercial License** - Required for business/SaaS applications
-
-See [LICENSE.md](./agentic-signal/LICENSE.md) for details.
-
-## 🙏 Credits
-
-- **Agentic Signal** by [Code Forge Temple](https://github.com/code-forge-temple)
-- **OpenAI Agent Builder** documentation and concepts
-- **React Flow** for the visual canvas
-- **Ollama** for local LLM runtime
-- **Meta** for LLaMA models
-
-## 🤝 Contributing
-
-Contributions welcome! See [CONTRIBUTING.md](./agentic-signal/CONTRIBUTING.md)
-
-Easy ways to contribute:
-- 🛠️ Add new tool integrations
-- 🐛 Report bugs
-- 📝 Improve documentation  
-- 💡 Suggest features
-
-## 📞 Support
-
-- **Documentation Issues**: Create an issue in this repo
-- **Agentic Signal Issues**: https://github.com/code-forge-temple/agentic-signal/issues
-- **Discord**: https://discord.gg/HZPEbJM8
-- **Email**: See GitHub profile
 
 ---
 
-**Built with ❤️ for the open-source AI community**
+## 🧪 Testing
 
-*Last Updated: October 9, 2025*
+```bash
+# Manual testing
+cd agent-builder
+bun run dev
+# Open http://localhost:5173 and test
+
+# Playwright testing (when available)
+npx playwright test
+```
+
+**See:** [docs/TESTING.md](./docs/TESTING.md) for test results
+
+---
+
+## 🔧 Development
+
+### Key Files:
+- `agent-builder/src/pages/Builder.tsx` - Main builder page
+- `agent-builder/src/components/Inspector.tsx` - Node inspector
+- `agent-builder/src/services/workflowExecutor.ts` - Execution engine
+
+### Current Priorities:
+1. Fix input state bug (blocks execution)
+2. Implement tool execution
+3. Test all node types
+
+**See:** [docs/IMPLEMENTATION.md](./docs/IMPLEMENTATION.md) for details
+
+---
+
+## 📊 Feature Parity
+
+| Feature | OpenAI | Local | Status |
+|---------|--------|-------|--------|
+| Node Types | 13 | 13 | ✅ 100% |
+| Input System | ✅ | 🔴 | Broken |
+| Tool Selection | ✅ | ✅ | UI only |
+| Tool Execution | ✅ | ❌ | Not implemented |
+| Workflow Execution | ✅ | 🔴 | Broken |
+
+**See:** [docs/REFERENCE.md](./docs/REFERENCE.md) for full comparison
+
+---
+
+## 🐛 Known Issues
+
+### Critical:
+1. **Input state doesn't sync** - Workflows can't execute
+2. **Tools don't execute** - Tools are cosmetic only
+
+### High Priority:
+- Node settings untested
+- Data flow untested
+- Persistence untested
+
+**See:** [CRITICAL_BUGS_FOUND.md](./CRITICAL_BUGS_FOUND.md) for details
+
+---
+
+## 📝 Contributing
+
+1. Check [docs/CURRENT_STATUS.md](./docs/CURRENT_STATUS.md) for current state
+2. Check [CRITICAL_BUGS_FOUND.md](./CRITICAL_BUGS_FOUND.md) for known issues
+3. Follow [docs/IMPLEMENTATION.md](./docs/IMPLEMENTATION.md) for implementation
+4. Update [CHANGELOG.md](./CHANGELOG.md) with changes
+
+---
+
+## 📖 Additional Resources
+
+- **Setup:** [QUICKSTART.md](./QUICKSTART.md)
+- **Architecture:** [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Code Audit:** [CODEBASE_AUDIT.md](./CODEBASE_AUDIT.md)
+- **OpenAI Docs:** [openai-agent-builder-docs.md](./openai-agent-builder-docs.md)
+- **UI/UX Spec:** [UI_UX_SPECIFICATION.md](./UI_UX_SPECIFICATION.md)
+
+---
+
+## 📜 License
+
+[Add license here]
+
+---
+
+**Last Updated:** October 9, 2025, 10:20 PM  
+**Status:** 🟡 Partially Functional - Critical bugs found  
+**Next:** Fix input state bug, implement tool execution

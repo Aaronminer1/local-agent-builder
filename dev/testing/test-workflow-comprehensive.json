@@ -1,0 +1,185 @@
+{
+  "id": "test-comprehensive",
+  "name": "Comprehensive Node Test",
+  "description": "Tests all 13 node types with proper data flow",
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "start",
+      "position": { "x": 100, "y": 50 },
+      "data": { "label": "🚀 Start" }
+    },
+    {
+      "id": "transform-1",
+      "type": "transform",
+      "position": { "x": 100, "y": 150 },
+      "data": { 
+        "label": "Transform",
+        "code": "return parseInt(input) * 2;"
+      }
+    },
+    {
+      "id": "setState-1",
+      "type": "setState",
+      "position": { "x": 100, "y": 250 },
+      "data": { 
+        "label": "Set State",
+        "key": "myNumber",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "ifElse-1",
+      "type": "ifElse",
+      "position": { "x": 100, "y": 350 },
+      "data": { 
+        "label": "If/Else",
+        "condition": "return input > 8;"
+      }
+    },
+    {
+      "id": "agent-1",
+      "type": "agent",
+      "position": { "x": 100, "y": 500 },
+      "data": { 
+        "label": "🤖 AI Agent",
+        "instructions": "Process the number and provide a response.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "while-1",
+      "type": "while",
+      "position": { "x": 100, "y": 650 },
+      "data": { 
+        "label": "While Loop",
+        "condition": "return false;",
+        "maxIterations": 100
+      }
+    },
+    {
+      "id": "userApproval-1",
+      "type": "userApproval",
+      "position": { "x": 100, "y": 800 },
+      "data": { 
+        "label": "User Approval"
+      }
+    },
+    {
+      "id": "guardrails-1",
+      "type": "guardrails",
+      "position": { "x": 100, "y": 950 },
+      "data": { 
+        "label": "Guardrails"
+      }
+    },
+    {
+      "id": "mcp-1",
+      "type": "mcp",
+      "position": { "x": 100, "y": 1100 },
+      "data": { 
+        "label": "MCP"
+      }
+    },
+    {
+      "id": "fileSearch-1",
+      "type": "fileSearch",
+      "position": { "x": 100, "y": 1250 },
+      "data": { 
+        "label": "File Search"
+      }
+    },
+    {
+      "id": "voice-1",
+      "type": "voice",
+      "position": { "x": 100, "y": 1400 },
+      "data": { 
+        "label": "Voice Output",
+        "voice": "male",
+        "speed": 1
+      }
+    },
+    {
+      "id": "end-1",
+      "type": "end",
+      "position": { "x": 100, "y": 1550 },
+      "data": { 
+        "label": "End"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "source": "start-1",
+      "target": "transform-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e2",
+      "source": "transform-1",
+      "target": "setState-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e3",
+      "source": "setState-1",
+      "target": "ifElse-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e4",
+      "source": "ifElse-1",
+      "target": "agent-1",
+      "sourceHandle": "true",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e5",
+      "source": "agent-1",
+      "target": "while-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e6",
+      "source": "while-1",
+      "target": "userApproval-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e7",
+      "source": "userApproval-1",
+      "target": "guardrails-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e8",
+      "source": "guardrails-1",
+      "target": "mcp-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e9",
+      "source": "mcp-1",
+      "target": "fileSearch-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e10",
+      "source": "fileSearch-1",
+      "target": "voice-1",
+      "type": "smoothstep"
+    },
+    {
+      "id": "e11",
+      "source": "voice-1",
+      "target": "end-1",
+      "type": "smoothstep"
+    }
+  ],
+  "variables": [],
+  "savedAt": "2025-10-09T23:35:00.000Z",
+  "nodeCount": 12
+}

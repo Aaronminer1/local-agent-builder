@@ -12,17 +12,38 @@ import IfElseNode from '../components/nodes/IfElseNode';
 import TransformNode from '../components/nodes/TransformNode';
 import FileSearchNode from '../components/nodes/FileSearchNode';
 import VoiceNode from '../components/nodes/VoiceNode';
+import EndNode from '../components/nodes/EndNode';
+import NoteNode from '../components/nodes/NoteNode';
+import GuardrailsNode from '../components/nodes/GuardrailsNode';
+import MCPNode from '../components/nodes/MCPNode';
+import UserApprovalNode from '../components/nodes/UserApprovalNode';
+import SetStateNode from '../components/nodes/SetStateNode';
+import WhileNode from '../components/nodes/WhileNode';
 import { WorkflowExecutor, type ExecutionLog } from '../services/workflowExecutor';
 import { initialNodes, initialEdges } from '../data/defaultWorkflow';
 
 // Define node types for React Flow
 const nodeTypes: NodeTypes = {
-  agent: AgentNode,
+  // Core nodes
   start: StartNode,
-  ifElse: IfElseNode,
-  transform: TransformNode,
+  agent: AgentNode,
+  end: EndNode,
+  note: NoteNode,
+  
+  // Tool nodes
   fileSearch: FileSearchNode,
+  guardrails: GuardrailsNode,
+  mcp: MCPNode,
   voice: VoiceNode,
+  
+  // Logic nodes
+  ifElse: IfElseNode,
+  while: WhileNode,
+  userApproval: UserApprovalNode,
+  
+  // Data nodes
+  transform: TransformNode,
+  setState: SetStateNode,
 };
 
 function FlowCanvas() {
@@ -48,6 +69,7 @@ function FlowCanvas() {
     description: string;
     required: boolean;
   }>>([]);
+  const [userInput, setUserInput] = useState('');
   const { screenToFlowPosition } = useReactFlow();
   const dropCountRef = useRef(0);
   const executorRef = useRef<WorkflowExecutor | null>(null);
@@ -85,9 +107,61 @@ function FlowCanvas() {
     }
   }, [workflowId, setNodes, setEdges]);
 
+  // Auto-save workflow to localStorage whenever nodes or edges change
+  useEffect(() => {
+    // Don't auto-save on initial mount or if no changes yet
+    if (nodes.length === 0) return;
+    
+    // Use a debounce timer to avoid saving too frequently
+    const timeoutId = setTimeout(() => {
+      const autoSaveKey = workflowId === 'new' ? 'agent-builder-autosave' : `agent-builder-workflow-${workflowId}`;
+      
+      const workflow = {
+        id: workflowId || 'autosave',
+        name: workflowName || 'Untitled Workflow',
+        description: workflowDescription,
+        nodes,
+        edges,
+        variables: workflowVariables,
+        version: '1.0',
+        savedAt: new Date().toISOString(),
+        nodeCount: nodes.length,
+      };
+      
+      localStorage.setItem(autoSaveKey, JSON.stringify(workflow));
+      console.log('💾 Auto-saved workflow with', nodes.length, 'nodes');
+    }, 500); // Debounce for 500ms
+    
+    return () => clearTimeout(timeoutId);
+  }, [nodes, edges, workflowId, workflowName, workflowDescription, workflowVariables]);
+
+  // Load auto-saved workflow for 'new' workflows
+  useEffect(() => {
+    if (workflowId === 'new') {
+      const autoSaved = localStorage.getItem('agent-builder-autosave');
+      if (autoSaved) {
+        try {
+          const workflow = JSON.parse(autoSaved);
+          setNodes(workflow.nodes || initialNodes);
+          setEdges(workflow.edges || initialEdges);
+          setWorkflowVariables(workflow.variables || []);
+          console.log('✅ Restored auto-saved workflow with', workflow.nodes?.length || 0, 'nodes');
+        } catch (e) {
+          console.error('Failed to restore auto-save:', e);
+        }
+      }
+    }
+  }, []); // Only run once on mount
+
   // Execute workflow
   const handleExecute = useCallback(async () => {
     if (isExecuting) return;
+
+    // Validate input
+    if (!userInput.trim()) {
+      alert('Please enter an input before running the workflow');
+      return;
+    }
 
     setIsExecuting(true);
     setExecutionLogs([]);
@@ -97,7 +171,7 @@ function FlowCanvas() {
       const executor = new WorkflowExecutor(
         nodes,
         edges,
-        'My score is 75 points',
+        userInput,  // Use dynamic input
         (log) => {
           setExecutionLogs(prev => [...prev, log]);
         }
@@ -116,7 +190,7 @@ function FlowCanvas() {
       setIsExecuting(false);
       executorRef.current = null;
     }
-  }, [nodes, edges, isExecuting]);
+  }, [nodes, edges, isExecuting, userInput]);
 
   // Stop workflow execution
   const handleStop = useCallback(() => {
@@ -333,6 +407,34 @@ function FlowCanvas() {
         onBack={() => navigate('/workflows')}
         workflowName={workflowName}
       />
+
+      {/* Workflow Input Panel */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
+        <div className="max-w-4xl mx-auto">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Workflow Input (input_as_text)
+          </label>
+          <div className="flex gap-2">
+            <textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="Enter your input here... (e.g., 'My score is 75 points')" 
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              rows={2}
+            />
+            <button
+              onClick={() => setUserInput('')}
+              className="px-3 py-2 text-gray-500 hover:text-gray-700 text-sm"
+              title="Clear input"
+            >
+              ✕
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            💡 This input will be available as <code className="bg-gray-100 px-1 rounded">input_as_text</code> throughout your workflow
+          </p>
+        </div>
+      </div>
 
       {/* Main Content - 3 Column Layout */}
       <div className="flex flex-1 overflow-hidden">

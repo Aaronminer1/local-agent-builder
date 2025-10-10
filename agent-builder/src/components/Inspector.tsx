@@ -28,6 +28,8 @@ export default function Inspector({
   onRemoveVariable 
 }: InspectorProps) {
   const [ollamaModels, setOllamaModels] = useState<OllamaModel[]>([]);
+  const [showToolMenu, setShowToolMenu] = useState(false);
+  const [selectedTools, setSelectedTools] = useState<string[]>([]);
   const [ollamaAvailable, setOllamaAvailable] = useState(false);
   const [loadingModels, setLoadingModels] = useState(true);
   const [showAddVariableDialog, setShowAddVariableDialog] = useState(false);
@@ -38,6 +40,38 @@ export default function Inspector({
     description: '',
     required: false,
   });
+
+  // Helper function to get tool info
+  const getToolInfo = (toolId: string) => {
+    const tools: Record<string, { name: string; icon: string }> = {
+      'client-tool': { name: 'Client tool', icon: '🔧' },
+      'mcp-server': { name: 'MCP server', icon: '🔌' },
+      'file-search': { name: 'File search', icon: '📄' },
+      'web-search': { name: 'Web search', icon: '🌐' },
+      'code-interpreter': { name: 'Code Interpreter', icon: '💻' },
+      'function': { name: 'Function', icon: '⚡' },
+      'custom': { name: 'Custom', icon: '⚙️' },
+    };
+    return tools[toolId] || { name: toolId, icon: '🔧' };
+  };
+
+  // Helper function to add a tool
+  const addTool = (toolId: string) => {
+    if (!selectedNode) return;
+    const updated = [...selectedTools, toolId];
+    setSelectedTools(updated);
+    onUpdateNode?.(selectedNode.id, { tools: updated });
+    setShowToolMenu(false);
+  };
+
+  // Load tools from node data when node changes
+  useEffect(() => {
+    if (selectedNode?.data?.tools && Array.isArray(selectedNode.data.tools)) {
+      setSelectedTools(selectedNode.data.tools);
+    } else {
+      setSelectedTools([]);
+    }
+  }, [selectedNode?.id]);
 
   // Fetch Ollama models on mount
   useEffect(() => {
@@ -197,10 +231,131 @@ export default function Inspector({
               <label className="block text-xs font-semibold text-gray-700 mb-2">
                 Tools
               </label>
-              <button className="w-full px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 font-medium">
-                <span>+</span>
-                <span>Add tool</span>
-              </button>
+              
+              {/* Selected tools list */}
+              {selectedTools.length > 0 && (
+                <div className="mb-2 space-y-1">
+                  {selectedTools.map(toolId => {
+                    const toolInfo = getToolInfo(toolId);
+                    return (
+                      <div key={toolId} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded border border-gray-200">
+                        <span className="text-sm flex items-center gap-2">
+                          <span>{toolInfo.icon}</span>
+                          <span>{toolInfo.name}</span>
+                        </span>
+                        <button
+                          onClick={() => {
+                            const updated = selectedTools.filter(id => id !== toolId);
+                            setSelectedTools(updated);
+                            onUpdateNode?.(selectedNode.id, { tools: updated });
+                          }}
+                          className="text-red-600 hover:text-red-800 text-sm"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Add tool button with dropdown */}
+              <div className="relative">
+                <button 
+                  onClick={() => setShowToolMenu(!showToolMenu)}
+                  className="w-full px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg text-sm text-gray-600 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2 font-medium"
+                >
+                  <span>+</span>
+                  <span>Add tool</span>
+                </button>
+
+                {/* Tool dropdown menu */}
+                {showToolMenu && (
+                  <>
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto">
+                      {/* ChatKit section */}
+                      <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">
+                        ChatKit
+                      </div>
+                      <button
+                        onClick={() => addTool('client-tool')}
+                        disabled={selectedTools.includes('client-tool')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>🔧</span>
+                        <span>Client tool</span>
+                      </button>
+
+                      <div className="border-t my-2"></div>
+
+                      {/* Hosted section */}
+                      <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">
+                        Hosted
+                      </div>
+                      <button
+                        onClick={() => addTool('mcp-server')}
+                        disabled={selectedTools.includes('mcp-server')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>🔌</span>
+                        <span>MCP server</span>
+                      </button>
+                      <button
+                        onClick={() => addTool('file-search')}
+                        disabled={selectedTools.includes('file-search')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>📄</span>
+                        <span>File search</span>
+                      </button>
+                      <button
+                        onClick={() => addTool('web-search')}
+                        disabled={selectedTools.includes('web-search')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>🌐</span>
+                        <span>Web search</span>
+                      </button>
+                      <button
+                        onClick={() => addTool('code-interpreter')}
+                        disabled={selectedTools.includes('code-interpreter')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>💻</span>
+                        <span>Code Interpreter</span>
+                      </button>
+
+                      <div className="border-t my-2"></div>
+
+                      {/* Local section */}
+                      <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase">
+                        Local
+                      </div>
+                      <button
+                        onClick={() => addTool('function')}
+                        disabled={selectedTools.includes('function')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>⚡</span>
+                        <span>Function</span>
+                      </button>
+                      <button
+                        onClick={() => addTool('custom')}
+                        disabled={selectedTools.includes('custom')}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span>⚙️</span>
+                        <span>Custom</span>
+                      </button>
+                    </div>
+                    {/* Click outside to close */}
+                    <div
+                      className="fixed inset-0 z-40"
+                      onClick={() => setShowToolMenu(false)}
+                    />
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Output Format */}
@@ -548,12 +703,33 @@ export default function Inspector({
         {/* Start Node Configuration */}
         {selectedNode.type === 'start' && (
           <div className="space-y-4">
+            {/* Input Variables Section */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">
                 Input variables
               </label>
+              
+              {/* System variable: input_as_text (always present) */}
+              <div className="mb-3 bg-green-50 p-3 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-600">📝</span>
+                  <span className="font-mono text-sm font-semibold text-green-700">input_as_text</span>
+                  <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded">string</span>
+                  <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded">system</span>
+                </div>
+                <p className="text-xs text-green-700 mt-1 ml-6">
+                  User input automatically available to all nodes
+                </p>
+              </div>
+            </div>
+
+            {/* State Variables Section */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-2">
+                State variables
+              </label>
               <p className="text-xs text-gray-500 mb-3">
-                Define variables that will be available throughout the workflow
+                Define custom variables for your workflow
               </p>
               
               {/* List existing variables */}

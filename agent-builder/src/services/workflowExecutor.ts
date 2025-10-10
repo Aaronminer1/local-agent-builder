@@ -194,7 +194,8 @@ export class WorkflowExecutor {
 
     // For While loops, only follow the exit edge (the body is handled internally)
     if (node?.type === 'while') {
-      const exitEdge = outgoingEdges.find((e) => e.sourceHandle === 'exit');
+      // Try to find exit edge first, otherwise use any non-body edge
+      const exitEdge = outgoingEdges.find((e) => e.sourceHandle === 'exit' || e.sourceHandle !== 'body');
       return exitEdge ? [exitEdge.target] : [];
     }
 
@@ -212,15 +213,16 @@ export class WorkflowExecutor {
   }
 
   /**
-   * Execute Agent node - Call LLM
+   * Execute Agent node - Call LLM (with optional tool support)
    */
   private async executeAgent(node: Node): Promise<string> {
     const instructions = (node.data?.instructions as string) || 'You are a helpful assistant.';
     const model = (node.data?.model as string) || 'llama3.2:3b';
     const includeChatHistory = node.data?.includeChatHistory as boolean;
     const temperature = (node.data?.temperature as number) || 0.7;
+    const useTools = node.data?.useTools as boolean; // NEW: Check if tools enabled
 
-    console.log(`🤖 Calling LLM: ${model}`);
+    console.log(`🤖 Calling LLM: ${model}${useTools ? ' (with tools)' : ''}`);
 
     // Build prompt - replace {input} placeholder with actual input
     const systemPrompt = (instructions || 'You are a helpful assistant.').replace(/{input}/g, String(this.context.currentInput));
@@ -229,7 +231,10 @@ export class WorkflowExecutor {
     try {
       let response: string;
 
-      if (includeChatHistory && this.context.history.length > 0) {
+      // NEW: If tools enabled and model supports it, use chatWithTools
+      if (useTools && (model.includes('gpt-oss') || model.includes('llama3') || model.includes('qwen') || model.includes('deepseek'))) {
+        response = await this.executeAgentWithTools(node, systemPrompt, userPrompt);
+      } else if (includeChatHistory && this.context.history.length > 0) {
         // Use chat completion with history
         const messages = [
           { role: 'system' as const, content: systemPrompt },
@@ -262,11 +267,185 @@ export class WorkflowExecutor {
   }
 
   /**
-   * Execute If/Else node - Conditional logic
+   * Execute Agent with Tool Support
    */
-  private async executeIfElse(node: Node): Promise<boolean> {
+  private async executeAgentWithTools(node: Node, systemPrompt: string, userPrompt: string): Promise<string> {
+    const model = (node.data?.model as string) || 'gpt-oss:20b';
+    
+    // Define available tools
+    const tools = [
+      {
+        type: 'function' as const,
+        function: {
+          name: 'web_search',
+          description: 'Search the web or navigate to a URL to gather information',
+          parameters: {
+            type: 'object',
+            properties: {
+              query: {
+                type: 'string',
+                description: 'The search query or topic to research'
+              },
+              url: {
+                type: 'string',
+                description: 'Optional: Specific URL to navigate to'
+              }
+            },
+            required: ['query']
+          }
+        }
+      }
+    ];
+
+    const messages: any[] = [
+      { role: 'system', content: systemPrompt + '\n\nYou have access to tools. Use them when needed to gather current information.' },
+      { role: 'user', content: userPrompt }
+    ];
+
+    console.log('🔧 Agent has access to tools:', tools.map(t => t.function.name).join(', '));
+
+    // Call LLM with tools
+    const result = await ollamaService.chatWithTools(model, messages, tools);
+
+    console.log('💭 Model thinking:', result.thinking);
+
+    // Check if model requested tool calls
+    if (result.tool_calls && result.tool_calls.length > 0) {
+      console.log('🔧 Model requested', result.tool_calls.length, 'tool call(s)');
+
+      let lastToolResult = '';
+
+      // Execute each tool call
+      for (const toolCall of result.tool_calls) {
+        const toolName = toolCall.function.name;
+        const toolArgs = toolCall.function.arguments;
+
+        console.log(`🔧 Executing tool: ${toolName} with args:`, toolArgs);
+
+        // Execute the tool
+        const toolResult = await this.executeTool(toolName, toolArgs);
+        lastToolResult = toolResult;
+
+        console.log(`✅ Tool result:`, toolResult.substring(0, 200) + '...');
+
+        // Feed result back to model
+        messages.push({
+          role: 'assistant',
+          content: result.content,
+          tool_calls: result.tool_calls
+        });
+        messages.push({
+          role: 'tool',
+          content: toolResult
+        });
+      }
+
+      // Get final response from model with tool results
+      console.log('🤖 Asking model to process tool results...');
+      const finalResult = await ollamaService.chatWithTools(model, messages);
+      return finalResult.content || lastToolResult || result.content;
+    }
+
+    // No tool calls, return content directly
+    return result.content;
+  }
+
+  /**
+   * Execute a tool (currently supports web_search)
+   */
+  private async executeTool(toolName: string, args: any): Promise<string> {
+    switch (toolName) {
+      case 'web_search':
+        return await this.executeWebSearch(args.query, args.url);
+      default:
+        return `Error: Unknown tool ${toolName}`;
+    }
+  }
+
+  /**
+   * Execute web search using MCP Playwright server
+   */
+  private async executeWebSearch(query: string, url?: string): Promise<string> {
+    try {
+      console.log(`🌐 Using MCP Playwright to search: ${query}`);
+      
+      // Import MCP service dynamically to avoid issues
+      const { mcpService } = await import('./mcpService');
+      
+      if (url) {
+        // Navigate to specific URL
+        return await mcpService.navigateAndExtract(url);
+      } else {
+        // Search Google for the query
+        return await mcpService.searchGoogle(query);
+      }
+    } catch (error) {
+      console.error('MCP Playwright error:', error);
+      return `Error using MCP Playwright: ${error}\n\nNote: MCP Playwright requires browser access and may be blocked in some environments.`;
+    }
+  }
+
+  /**
+   * Extract search results from DuckDuckGo HTML
+   */
+  private extractSearchResults(html: string, query: string): string {
+    try {
+      // Simple regex-based extraction (basic but works)
+      const resultRegex = /<a class="result__a"[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
+      const snippetRegex = /<a class="result__snippet"[^>]*>([^<]+)<\/a>/g;
+      
+      const results: Array<{title: string, url: string, snippet?: string}> = [];
+      let match;
+      
+      // Extract titles and URLs
+      while ((match = resultRegex.exec(html)) !== null && results.length < 5) {
+        results.push({
+          title: match[2].trim(),
+          url: match[1].trim()
+        });
+      }
+
+      // Extract snippets
+      let snippetIndex = 0;
+      while ((match = snippetRegex.exec(html)) !== null && snippetIndex < results.length) {
+        if (results[snippetIndex]) {
+          results[snippetIndex].snippet = match[1].trim();
+        }
+        snippetIndex++;
+      }
+
+      if (results.length === 0) {
+        return `No search results found. The page may have a different format or be blocked.`;
+      }
+
+      // Format results
+      return results.map((result, index) => {
+        let formatted = `${index + 1}. ${result.title}\n   URL: ${result.url}`;
+        if (result.snippet) {
+          formatted += `\n   ${result.snippet}`;
+        }
+        return formatted;
+      }).join('\n\n');
+
+    } catch (error) {
+      console.error('Error parsing search results:', error);
+      return `Found search results but could not parse them. Query: "${query}"`;
+    }
+  }
+
+  /**
+   * Execute If/Else node - Conditional logic
+   * Note: Returns the input data, not the condition result
+   * The condition is evaluated for routing purposes only
+   */
+  private async executeIfElse(node: Node): Promise<any> {
     const condition = node.data?.condition as string | undefined;
-    return this.evaluateCondition(String(this.context.currentInput), condition);
+    // Evaluate condition for routing (stored internally for edge following)
+    const conditionResult = this.evaluateCondition(String(this.context.currentInput), condition);
+    // Store condition result for routing decisions
+    (node as any)._conditionResult = conditionResult;
+    // Return the input data, not the boolean
+    return this.context.currentInput;
   }
 
   /**
@@ -291,7 +470,7 @@ export class WorkflowExecutor {
    * Execute Transform node - Data transformation
    */
   private async executeTransform(node: Node): Promise<any> {
-    const transformCode = node.data?.transformCode as string | undefined;
+    const transformCode = node.data?.code as string | undefined;
 
     if (!transformCode) {
       return this.context.currentInput;

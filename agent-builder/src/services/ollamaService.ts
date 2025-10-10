@@ -208,6 +208,66 @@ class OllamaService {
       throw error;
     }
   }
+
+  /**
+   * Chat with tool support - Returns full response including tool calls
+   */
+  async chatWithTools(
+    model: string,
+    messages: Array<{ role: 'system' | 'user' | 'assistant' | 'tool'; content: string; tool_calls?: any[] }>,
+    tools?: Array<{
+      type: 'function';
+      function: {
+        name: string;
+        description: string;
+        parameters: any;
+      };
+    }>
+  ): Promise<{
+    content: string;
+    thinking?: string;
+    tool_calls?: Array<{
+      function: {
+        name: string;
+        arguments: any;
+      };
+    }>;
+  }> {
+    try {
+      const requestBody: any = {
+        model,
+        messages,
+        stream: false,
+      };
+
+      if (tools && tools.length > 0) {
+        requestBody.tools = tools;
+      }
+
+      const response = await fetch(`${this.baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Chat with tools failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      
+      return {
+        content: data.message?.content || '',
+        thinking: data.message?.thinking,
+        tool_calls: data.message?.tool_calls,
+      };
+    } catch (error) {
+      console.error('Error in chat with tools:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance

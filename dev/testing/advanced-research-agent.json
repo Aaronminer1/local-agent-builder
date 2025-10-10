@@ -1,0 +1,367 @@
+{
+  "id": "advanced-research-agent",
+  "name": "Advanced Research & Content Creation Agent",
+  "description": "Multi-agent system that researches a topic, validates information, creates structured content, and iteratively improves it",
+  "version": "1.0",
+  "nodes": [
+    {
+      "id": "start-1",
+      "type": "start",
+      "position": { "x": 100, "y": 50 },
+      "data": { "label": "🚀 Start" }
+    },
+    {
+      "id": "input-parser",
+      "type": "agent",
+      "position": { "x": 100, "y": 150 },
+      "data": { 
+        "label": "📝 Input Parser",
+        "instructions": "Parse the user's research request. Extract: 1) Main topic, 2) Depth level (basic/intermediate/advanced), 3) Output format (article/report/summary), 4) Key questions to answer. Return as JSON.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "store-request",
+      "type": "setState",
+      "position": { "x": 100, "y": 280 },
+      "data": { 
+        "label": "💾 Store Request",
+        "key": "research_request",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "research-planner",
+      "type": "agent",
+      "position": { "x": 100, "y": 410 },
+      "data": { 
+        "label": "🎯 Research Planner",
+        "instructions": "Create a research plan with 3-5 specific research questions. Each question should be focused and answerable. Return as numbered list.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "store-plan",
+      "type": "setState",
+      "position": { "x": 100, "y": 540 },
+      "data": { 
+        "label": "💾 Store Plan",
+        "key": "research_plan",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "init-counter",
+      "type": "transform",
+      "position": { "x": 100, "y": 670 },
+      "data": { 
+        "label": "🔢 Init Counter",
+        "code": "return JSON.stringify({ question_num: 1, max_questions: 5, research_data: [] });"
+      }
+    },
+    {
+      "id": "store-counter",
+      "type": "setState",
+      "position": { "x": 100, "y": 800 },
+      "data": { 
+        "label": "💾 Store Counter",
+        "key": "loop_state",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "research-loop",
+      "type": "while",
+      "position": { "x": 100, "y": 930 },
+      "data": { 
+        "label": "🔄 Research Loop",
+        "condition": "const loopState = JSON.parse(state.loop_state || '{}'); return loopState.question_num <= loopState.max_questions;",
+        "maxIterations": 10
+      }
+    },
+    {
+      "id": "extract-question",
+      "type": "transform",
+      "position": { "x": 400, "y": 930 },
+      "data": { 
+        "label": "📋 Extract Question",
+        "code": "const loopState = JSON.parse(input); return `Research question ${loopState.question_num} from the plan`;"
+      }
+    },
+    {
+      "id": "researcher-agent",
+      "type": "agent",
+      "position": { "x": 400, "y": 1060 },
+      "data": { 
+        "label": "🔬 Researcher",
+        "instructions": "Research this specific question thoroughly. Provide detailed, factual information with examples. Be comprehensive but concise.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "fact-checker",
+      "type": "agent",
+      "position": { "x": 400, "y": 1190 },
+      "data": { 
+        "label": "✅ Fact Checker",
+        "instructions": "Review the research for accuracy. Flag any claims that seem questionable. Rate confidence level (high/medium/low). Suggest improvements.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "quality-check",
+      "type": "ifElse",
+      "position": { "x": 400, "y": 1320 },
+      "data": { 
+        "label": "🎯 Quality Check",
+        "condition": "return input.toLowerCase().includes('high') || input.toLowerCase().includes('medium');"
+      }
+    },
+    {
+      "id": "store-research",
+      "type": "transform",
+      "position": { "x": 600, "y": 1450 },
+      "data": { 
+        "label": "💾 Store Research",
+        "code": "const loopState = JSON.parse(state.loop_state || '{}'); loopState.research_data.push(input); loopState.question_num++; return JSON.stringify(loopState);"
+      }
+    },
+    {
+      "id": "update-counter",
+      "type": "setState",
+      "position": { "x": 600, "y": 1580 },
+      "data": { 
+        "label": "🔄 Update Counter",
+        "key": "loop_state",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "retry-research",
+      "type": "agent",
+      "position": { "x": 200, "y": 1450 },
+      "data": { 
+        "label": "🔁 Retry Research",
+        "instructions": "The previous research had quality issues. Research this question again with more focus on accuracy and verifiable facts.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "synthesizer",
+      "type": "agent",
+      "position": { "x": 100, "y": 1710 },
+      "data": { 
+        "label": "🧠 Synthesizer",
+        "instructions": "Synthesize all research findings into a coherent narrative. Connect ideas, identify patterns, and create a logical flow. Maintain all key facts.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "outline-creator",
+      "type": "agent",
+      "position": { "x": 100, "y": 1840 },
+      "data": { 
+        "label": "📑 Outline Creator",
+        "instructions": "Create a detailed outline with: 1) Introduction, 2) Main sections (3-5), 3) Key points per section, 4) Conclusion. Use the synthesized research.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "content-writer",
+      "type": "agent",
+      "position": { "x": 100, "y": 1970 },
+      "data": { 
+        "label": "✍️ Content Writer",
+        "instructions": "Write comprehensive content following the outline. Use clear, engaging language. Include examples and explanations. Aim for 500-800 words.",
+        "model": "llama3.1:8b",
+        "includeHistory": true
+      }
+    },
+    {
+      "id": "editor",
+      "type": "agent",
+      "position": { "x": 100, "y": 2100 },
+      "data": { 
+        "label": "📝 Editor",
+        "instructions": "Edit for clarity, flow, and grammar. Improve transitions. Ensure consistency. Fix any awkward phrasing. Maintain the core message.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "quality-scorer",
+      "type": "agent",
+      "position": { "x": 100, "y": 2230 },
+      "data": { 
+        "label": "⭐ Quality Scorer",
+        "instructions": "Rate the content quality on: Accuracy (1-10), Clarity (1-10), Completeness (1-10), Engagement (1-10). Return scores as JSON. If average < 7, suggest improvements.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "quality-gate",
+      "type": "ifElse",
+      "position": { "x": 100, "y": 2360 },
+      "data": { 
+        "label": "🚦 Quality Gate",
+        "condition": "const score = parseFloat(input.match(/\\d+/)?.[0] || '0'); return score >= 7;"
+      }
+    },
+    {
+      "id": "improvement-loop-check",
+      "type": "transform",
+      "position": { "x": -100, "y": 2490 },
+      "data": { 
+        "label": "🔄 Check Iterations",
+        "code": "const iterations = parseInt(state.improvement_iterations || '0'); return iterations < 2 ? 'retry' : 'accept';"
+      }
+    },
+    {
+      "id": "increment-iterations",
+      "type": "setState",
+      "position": { "x": -100, "y": 2620 },
+      "data": { 
+        "label": "➕ Increment",
+        "key": "improvement_iterations",
+        "value": "{{input}}"
+      }
+    },
+    {
+      "id": "formatter",
+      "type": "agent",
+      "position": { "x": 300, "y": 2490 },
+      "data": { 
+        "label": "🎨 Formatter",
+        "instructions": "Format the final content with: Title, Executive Summary, Main Content (with headers), Key Takeaways, and Sources/References section.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "metadata-generator",
+      "type": "agent",
+      "position": { "x": 300, "y": 2620 },
+      "data": { 
+        "label": "📊 Metadata",
+        "instructions": "Generate metadata: word count, reading time, key topics (5-7 tags), difficulty level, target audience. Return as JSON.",
+        "model": "llama3.1:8b",
+        "includeHistory": false
+      }
+    },
+    {
+      "id": "final-package",
+      "type": "transform",
+      "position": { "x": 300, "y": 2750 },
+      "data": { 
+        "label": "📦 Package Output",
+        "code": "return JSON.stringify({ content: input, metadata: state.metadata, research_plan: state.research_plan, timestamp: new Date().toISOString() });"
+      }
+    },
+    {
+      "id": "user-approval",
+      "type": "userApproval",
+      "position": { "x": 300, "y": 2880 },
+      "data": { 
+        "label": "✋ Human Review",
+        "message": "Review the generated content before finalizing"
+      }
+    },
+    {
+      "id": "guardrails",
+      "type": "guardrails",
+      "position": { "x": 300, "y": 3010 },
+      "data": { 
+        "label": "🛡️ Content Safety",
+        "rules": ["No harmful content", "No personal information", "Factual accuracy"]
+      }
+    },
+    {
+      "id": "end",
+      "type": "end",
+      "position": { "x": 300, "y": 3140 },
+      "data": { 
+        "label": "🏁 Complete"
+      }
+    }
+  ],
+  "edges": [
+    {"id": "e1", "source": "start-1", "target": "input-parser"},
+    {"id": "e2", "source": "input-parser", "target": "store-request"},
+    {"id": "e3", "source": "store-request", "target": "research-planner"},
+    {"id": "e4", "source": "research-planner", "target": "store-plan"},
+    {"id": "e5", "source": "store-plan", "target": "init-counter"},
+    {"id": "e6", "source": "init-counter", "target": "store-counter"},
+    {"id": "e7", "source": "store-counter", "target": "research-loop"},
+    {"id": "e8", "source": "research-loop", "target": "extract-question", "sourceHandle": "body"},
+    {"id": "e9", "source": "extract-question", "target": "researcher-agent"},
+    {"id": "e10", "source": "researcher-agent", "target": "fact-checker"},
+    {"id": "e11", "source": "fact-checker", "target": "quality-check"},
+    {"id": "e12", "source": "quality-check", "target": "store-research", "sourceHandle": "true"},
+    {"id": "e13", "source": "quality-check", "target": "retry-research", "sourceHandle": "false"},
+    {"id": "e14", "source": "retry-research", "target": "store-research"},
+    {"id": "e15", "source": "store-research", "target": "update-counter"},
+    {"id": "e16", "source": "update-counter", "target": "research-loop"},
+    {"id": "e17", "source": "research-loop", "target": "synthesizer"},
+    {"id": "e18", "source": "synthesizer", "target": "outline-creator"},
+    {"id": "e19", "source": "outline-creator", "target": "content-writer"},
+    {"id": "e20", "source": "content-writer", "target": "editor"},
+    {"id": "e21", "source": "editor", "target": "quality-scorer"},
+    {"id": "e22", "source": "quality-scorer", "target": "quality-gate"},
+    {"id": "e23", "source": "quality-gate", "target": "formatter", "sourceHandle": "true"},
+    {"id": "e24", "source": "quality-gate", "target": "improvement-loop-check", "sourceHandle": "false"},
+    {"id": "e25", "source": "improvement-loop-check", "target": "increment-iterations"},
+    {"id": "e26", "source": "increment-iterations", "target": "content-writer"},
+    {"id": "e27", "source": "formatter", "target": "metadata-generator"},
+    {"id": "e28", "source": "metadata-generator", "target": "final-package"},
+    {"id": "e29", "source": "final-package", "target": "user-approval"},
+    {"id": "e30", "source": "user-approval", "target": "guardrails"},
+    {"id": "e31", "source": "guardrails", "target": "end"}
+  ],
+  "variables": [
+    {
+      "name": "research_request",
+      "type": "object",
+      "defaultValue": "{}",
+      "description": "Parsed research request",
+      "required": false
+    },
+    {
+      "name": "research_plan",
+      "type": "string",
+      "defaultValue": "",
+      "description": "Research plan with questions",
+      "required": false
+    },
+    {
+      "name": "loop_state",
+      "type": "object",
+      "defaultValue": "{}",
+      "description": "Loop iteration state",
+      "required": false
+    },
+    {
+      "name": "improvement_iterations",
+      "type": "number",
+      "defaultValue": "0",
+      "description": "Number of improvement iterations",
+      "required": false
+    },
+    {
+      "name": "metadata",
+      "type": "object",
+      "defaultValue": "{}",
+      "description": "Content metadata",
+      "required": false
+    }
+  ],
+  "savedAt": "2025-10-09T23:39:00.000Z",
+  "nodeCount": 28
+}
