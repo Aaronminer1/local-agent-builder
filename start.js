@@ -229,8 +229,13 @@ function installPythonPackage(packageName) {
     const python = process.platform === 'win32' ? 'python' : 'python3';
     const pip = process.platform === 'win32' ? 'pip' : 'pip3';
     
-    // Try using pip directly first, fall back to python -m pip
-    const install = spawn(pip, ['install', packageName], {
+    // On Linux, try with --user flag first (works with managed environments)
+    const installArgs = process.platform === 'win32' 
+      ? ['install', packageName]
+      : ['install', '--user', packageName];
+    
+    // Try using pip directly first
+    const install = spawn(pip, installArgs, {
       stdio: 'inherit',
       shell: true
     });
@@ -240,9 +245,13 @@ function installPythonPackage(packageName) {
         logSuccess(`${packageName} installed`);
         resolve();
       } else {
-        // Fallback to python -m pip
+        // Fallback to python -m pip with --user
         logInfo(`Retrying with ${python} -m pip...`);
-        const fallbackInstall = spawn(python, ['-m', 'pip', 'install', packageName], {
+        const fallbackArgs = process.platform === 'win32'
+          ? ['-m', 'pip', 'install', packageName]
+          : ['-m', 'pip', 'install', '--user', packageName];
+        
+        const fallbackInstall = spawn(python, fallbackArgs, {
           stdio: 'inherit',
           shell: true
         });
@@ -252,7 +261,25 @@ function installPythonPackage(packageName) {
             logSuccess(`${packageName} installed`);
             resolve();
           } else {
-            reject(new Error(`Failed to install ${packageName}`));
+            // Last resort: try with --break-system-packages (for newer Ubuntu)
+            if (process.platform === 'linux') {
+              logInfo('Retrying with --break-system-packages flag...');
+              const lastResort = spawn(pip, ['install', '--break-system-packages', packageName], {
+                stdio: 'inherit',
+                shell: true
+              });
+              
+              lastResort.on('close', (lastCode) => {
+                if (lastCode === 0) {
+                  logSuccess(`${packageName} installed`);
+                  resolve();
+                } else {
+                  reject(new Error(`Failed to install ${packageName}`));
+                }
+              });
+            } else {
+              reject(new Error(`Failed to install ${packageName}`));
+            }
           }
         });
       }
