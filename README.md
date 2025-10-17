@@ -113,8 +113,8 @@ ollama pull llama3.2:latest
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd local-agent-builder-main
+   git clone https://github.com/Aaronminer1/local-agent-builder.git
+   cd local-agent-builder
    ```
 
 2. **Run the launcher**
@@ -143,8 +143,8 @@ If you prefer manual control:
 
 **Step 1: Clone the Repository**
 ```bash
-git clone <repository-url>
-cd local-agent-builder-main
+git clone https://github.com/Aaronminer1/local-agent-builder.git
+cd local-agent-builder
 ```
 
 **Step 2: Install Dependencies**
@@ -417,9 +417,10 @@ lsof -ti:5173 | xargs kill -9
 ## 📁 Project Structure
 
 ```
-local-agent-builder-main/
+local-agent-builder/
 ├── README.md                           # This file
 ├── MODEL_COMPATIBILITY.md              # Model tool support guide
+├── QUICKSTART.md                       # Quick start guide
 ├── UI_UX_SPECIFICATION.md              # UI/UX design specification
 ├── openai-agent-builder-reference.md   # OpenAI reference docs
 │
@@ -442,6 +443,9 @@ local-agent-builder-main/
 │   ├── package.json                   # App dependencies
 │   └── vite.config.ts                 # Vite configuration
 │
+├── start.js                            # Automated launcher script
+├── start.bat                           # Windows launcher
+├── start.sh                            # Mac/Linux launcher
 ├── tts-server.js                       # Text-to-Speech HTTP server
 ├── edge-tts-nossl.py                   # TTS Python wrapper
 ├── package.json                        # Root dependencies
@@ -478,6 +482,7 @@ local-agent-builder-main/
 | `agent-builder/src/services/workflowExecutor.ts` | Workflow execution engine |
 | `agent-builder/src/services/ollamaService.ts` | Ollama API integration |
 | `tts-server.js` | Text-to-Speech HTTP server |
+| `start.js` | Automated launcher with prerequisite checking |
 
 ### Running Tests
 
@@ -653,8 +658,8 @@ MIT License - feel free to use this project for personal or commercial purposes.
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
+- **Issues**: [GitHub Issues](https://github.com/Aaronminer1/local-agent-builder/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Aaronminer1/local-agent-builder/discussions)
 - **Documentation**: See files in this repository
 
 ---
