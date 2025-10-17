@@ -204,9 +204,18 @@ function installDependencies(dir, name) {
  */
 function checkPythonPackage(packageName) {
   return new Promise((resolve) => {
-    const python = process.platform === 'win32' ? 'python' : 'python3';
-    exec(`${python} -m pip show ${packageName}`, (error) => {
-      resolve(!error);
+    const pip = process.platform === 'win32' ? 'pip' : 'pip3';
+    // Try pip first, fall back to python -m pip
+    exec(`${pip} show ${packageName}`, (error) => {
+      if (!error) {
+        resolve(true);
+      } else {
+        // Fallback to python -m pip
+        const python = process.platform === 'win32' ? 'python' : 'python3';
+        exec(`${python} -m pip show ${packageName}`, (fallbackError) => {
+          resolve(!fallbackError);
+        });
+      }
     });
   });
 }
@@ -218,7 +227,10 @@ function installPythonPackage(packageName) {
   return new Promise((resolve, reject) => {
     logInfo(`Installing ${packageName}...`);
     const python = process.platform === 'win32' ? 'python' : 'python3';
-    const install = spawn(python, ['-m', 'pip', 'install', packageName], {
+    const pip = process.platform === 'win32' ? 'pip' : 'pip3';
+    
+    // Try using pip directly first, fall back to python -m pip
+    const install = spawn(pip, ['install', packageName], {
       stdio: 'inherit',
       shell: true
     });
@@ -228,7 +240,21 @@ function installPythonPackage(packageName) {
         logSuccess(`${packageName} installed`);
         resolve();
       } else {
-        reject(new Error(`Failed to install ${packageName}`));
+        // Fallback to python -m pip
+        logInfo(`Retrying with ${python} -m pip...`);
+        const fallbackInstall = spawn(python, ['-m', 'pip', 'install', packageName], {
+          stdio: 'inherit',
+          shell: true
+        });
+        
+        fallbackInstall.on('close', (fallbackCode) => {
+          if (fallbackCode === 0) {
+            logSuccess(`${packageName} installed`);
+            resolve();
+          } else {
+            reject(new Error(`Failed to install ${packageName}`));
+          }
+        });
       }
     });
   });
