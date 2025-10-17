@@ -60,6 +60,79 @@ function commandExists(command) {
 }
 
 /**
+ * Install Node.js on Linux
+ */
+function installNodeJS() {
+  return new Promise((resolve, reject) => {
+    logInfo('Installing Node.js...');
+    logInfo('This requires sudo privileges. You may be prompted for your password.');
+    
+    // Use NodeSource repository for latest LTS
+    const installScript = `
+      curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&
+      sudo apt-get install -y nodejs
+    `;
+    
+    const install = spawn('bash', ['-c', installScript], {
+      stdio: 'inherit',
+      shell: true
+    });
+    
+    install.on('close', (code) => {
+      if (code === 0) {
+        logSuccess('Node.js installed successfully');
+        resolve();
+      } else {
+        reject(new Error('Failed to install Node.js'));
+      }
+    });
+  });
+}
+
+/**
+ * Install Python on Linux
+ */
+function installPython() {
+  return new Promise((resolve, reject) => {
+    logInfo('Installing Python 3 and pip...');
+    logInfo('This requires sudo privileges. You may be prompted for your password.');
+    
+    const installScript = 'sudo apt-get update && sudo apt-get install -y python3 python3-pip';
+    
+    const install = spawn('bash', ['-c', installScript], {
+      stdio: 'inherit',
+      shell: true
+    });
+    
+    install.on('close', (code) => {
+      if (code === 0) {
+        logSuccess('Python installed successfully');
+        resolve();
+      } else {
+        reject(new Error('Failed to install Python'));
+      }
+    });
+  });
+}
+
+/**
+ * Prompt user for yes/no input
+ */
+function promptUser(question) {
+  return new Promise((resolve) => {
+    const readline = require('readline').createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    
+    readline.question(question, (answer) => {
+      readline.close();
+      resolve(answer.toLowerCase().trim());
+    });
+  });
+}
+
+/**
  * Check if Ollama is running
  */
 function checkOllamaRunning() {
@@ -211,29 +284,103 @@ async function main() {
     // Step 1: Check Node.js
     logSection('📋 Step 1: Checking Prerequisites');
     
-    const hasNode = await commandExists('node');
+    let hasNode = await commandExists('node');
     if (!hasNode) {
       logError('Node.js is not installed!');
-      logInfo('Please install Node.js from: https://nodejs.org/');
-      process.exit(1);
+      
+      // Offer automatic installation on Linux
+      if (process.platform === 'linux') {
+        log('\n' + '─'.repeat(60), 'yellow');
+        logInfo('Would you like to install Node.js automatically?');
+        logInfo('This will use the official NodeSource repository (Node.js 20 LTS)');
+        log('─'.repeat(60) + '\n', 'yellow');
+        
+        const answer = await promptUser('Install Node.js now? (y/n): ');
+        
+        if (answer === 'y' || answer === 'yes') {
+          try {
+            await installNodeJS();
+            // Verify installation
+            hasNode = await commandExists('node');
+            if (!hasNode) {
+              logError('Node.js installation completed but node command not found');
+              logInfo('You may need to restart your terminal or run: source ~/.bashrc');
+              process.exit(1);
+            }
+          } catch (error) {
+            logError('Failed to install Node.js automatically');
+            logInfo('Please install manually from: https://nodejs.org/');
+            logInfo('Or run: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -');
+            logInfo('         sudo apt-get install -y nodejs');
+            process.exit(1);
+          }
+        } else {
+          logInfo('Please install Node.js manually from: https://nodejs.org/');
+          logInfo('Or run: curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -');
+          logInfo('         sudo apt-get install -y nodejs');
+          process.exit(1);
+        }
+      } else {
+        // Windows/Mac - provide download link
+        logInfo('Please install Node.js from: https://nodejs.org/');
+        if (process.platform === 'win32') {
+          logInfo('Download the Windows installer and run it');
+        } else if (process.platform === 'darwin') {
+          logInfo('Download the macOS installer or use: brew install node');
+        }
+        process.exit(1);
+      }
     }
     logSuccess('Node.js is installed');
     
     const hasNpm = await commandExists('npm');
     if (!hasNpm) {
       logError('npm is not installed!');
+      logInfo('npm should come with Node.js. Please reinstall Node.js.');
       process.exit(1);
     }
     logSuccess('npm is installed');
     
     // Step 2: Check Python and edge-tts
-    const hasPython = await commandExists(process.platform === 'win32' ? 'python' : 'python3');
+    let hasPython = await commandExists(process.platform === 'win32' ? 'python' : 'python3');
     if (!hasPython) {
       logWarning('Python is not installed - TTS will not work');
-      logInfo('Install Python from: https://www.python.org/downloads/');
+      
+      // Offer automatic installation on Linux
+      if (process.platform === 'linux') {
+        log('\n' + '─'.repeat(60), 'yellow');
+        logInfo('Would you like to install Python 3 automatically?');
+        logInfo('This is required for Text-to-Speech functionality');
+        log('─'.repeat(60) + '\n', 'yellow');
+        
+        const answer = await promptUser('Install Python now? (y/n): ');
+        
+        if (answer === 'y' || answer === 'yes') {
+          try {
+            await installPython();
+            // Verify installation
+            hasPython = await commandExists('python3');
+            if (!hasPython) {
+              logWarning('Python installation completed but python3 command not found');
+              logInfo('TTS functionality may not work');
+            }
+          } catch (error) {
+            logWarning('Failed to install Python automatically');
+            logInfo('Install manually: sudo apt-get install python3 python3-pip');
+          }
+        } else {
+          logInfo('Skipping Python installation - TTS will not work');
+          logInfo('Install later: sudo apt-get install python3 python3-pip');
+        }
+      } else {
+        logInfo('Install Python from: https://www.python.org/downloads/');
+      }
     } else {
       logSuccess('Python is installed');
-      
+    }
+    
+    // Install edge-tts if Python is available
+    if (hasPython) {
       const hasEdgeTTS = await checkPythonPackage('edge-tts');
       if (!hasEdgeTTS) {
         logWarning('edge-tts is not installed - installing now...');
