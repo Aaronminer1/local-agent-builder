@@ -9,7 +9,7 @@ A visual workflow builder for creating AI agents with **real tool use capabiliti
 1. **Install Ollama & a model** (one-time setup)
    ```bash
    # Download Ollama from: https://ollama.ai/download
-   ollama pull llama3.1:8b
+   ollama pull gpt-oss 
    ```
 
 2. **Run the launcher**
