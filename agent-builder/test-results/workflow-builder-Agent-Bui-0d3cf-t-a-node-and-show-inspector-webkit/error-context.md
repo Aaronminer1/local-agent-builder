@@ -1,0 +1,143 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - button "← View all workflows" [ref=e6]:
+        - generic [ref=e7]: ←
+        - generic [ref=e8]: View all workflows
+      - generic [ref=e9]:
+        - heading "Untitled Workflow" [level=1] [ref=e10]
+        - button "v1 · draft" [ref=e12]
+    - generic [ref=e13]:
+      - button "🔊 Test Audio" [ref=e14]:
+        - generic [ref=e15]: 🔊
+        - generic [ref=e16]: Test Audio
+      - button "💾 Save" [ref=e17]:
+        - generic [ref=e18]: 💾
+        - generic [ref=e19]: Save
+      - button "⚙" [ref=e21]
+      - button "📊 Evaluate" [ref=e22]:
+        - generic [ref=e23]: 📊
+        - generic [ref=e24]: Evaluate
+      - button "</> Code" [ref=e25]:
+        - generic [ref=e26]: </>
+        - generic [ref=e27]: Code
+      - button "▶ Run" [ref=e28]:
+        - generic [ref=e29]: ▶
+        - generic [ref=e30]: Run
+      - button "Deploy" [ref=e31]
+  - generic [ref=e33]:
+    - generic [ref=e34]: Workflow Input (input_as_text)
+    - generic [ref=e35]:
+      - textbox "Enter your input here... (e.g., 'My score is 75 points')" [ref=e36]
+      - button "✕" [ref=e37]
+    - paragraph [ref=e38]:
+      - text: 💡 This input will be available as
+      - code [ref=e39]: input_as_text
+      - text: throughout your workflow
+  - generic [ref=e40]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - heading "Core" [level=3] [ref=e44]
+        - generic [ref=e45]:
+          - generic [ref=e46]:
+            - generic [ref=e47]: ▶
+            - generic [ref=e48]: Agent
+          - generic [ref=e49]:
+            - generic [ref=e50]: ⬛
+            - generic [ref=e51]: End
+          - generic [ref=e52]:
+            - generic [ref=e53]: 📝
+            - generic [ref=e54]: Note
+      - generic [ref=e55]:
+        - heading "Tools" [level=3] [ref=e56]
+        - generic [ref=e57]:
+          - generic [ref=e58]:
+            - generic [ref=e59]: 🔍
+            - generic [ref=e60]: File search
+          - generic [ref=e61]:
+            - generic [ref=e62]: 🛡️
+            - generic [ref=e63]: Guardrails
+          - generic [ref=e65]:
+            - generic [ref=e66]: 🔌
+            - generic [ref=e67]: MCP
+            - button "▶" [ref=e68]
+          - generic [ref=e69]:
+            - generic [ref=e70]: 🔊
+            - generic [ref=e71]: Voice (TTS)
+      - generic [ref=e72]:
+        - heading "Logic" [level=3] [ref=e73]
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]: ⚡
+            - generic [ref=e77]: If / else
+          - generic [ref=e78]:
+            - generic [ref=e79]: 🔄
+            - generic [ref=e80]: While
+          - generic [ref=e81]:
+            - generic [ref=e82]: ✋
+            - generic [ref=e83]: User approval
+      - generic [ref=e84]:
+        - heading "Data" [level=3] [ref=e85]
+        - generic [ref=e86]:
+          - generic [ref=e87]:
+            - generic [ref=e88]: 🔀
+            - generic [ref=e89]: Transform
+          - generic [ref=e90]:
+            - generic [ref=e91]: 💾
+            - generic [ref=e92]: Set state
+    - application [ref=e94]:
+      - generic [ref=e96]:
+        - generic:
+          - generic:
+            - img:
+              - group "Edge from start-1 to agent-1" [ref=e97] [cursor=pointer]
+          - generic:
+            - group [active] [ref=e100]:
+              - generic [ref=e103]:
+                - generic [ref=e104]: ●
+                - generic [ref=e105]: Start
+            - group [ref=e107]:
+              - generic [ref=e110]:
+                - generic [ref=e111]: ▶
+                - generic [ref=e112]:
+                  - generic [ref=e113]: 🤖 AI Agent
+                  - generic [ref=e114]: Agent
+                - button "⋮" [ref=e115]
+      - img
+      - generic "Control Panel" [ref=e118]:
+        - button "Zoom In" [ref=e119] [cursor=pointer]:
+          - img [ref=e120]
+        - button "Zoom Out" [ref=e122] [cursor=pointer]:
+          - img [ref=e123]
+        - button "Fit View" [ref=e125] [cursor=pointer]:
+          - img [ref=e126]
+      - img "Mini Map" [ref=e129]
+      - link "React Flow attribution" [ref=e133]:
+        - /url: https://reactflow.dev
+        - text: React Flow
+    - generic [ref=e136]:
+      - generic [ref=e138]:
+        - heading "🚀 Start" [level=2] [ref=e139]
+        - paragraph [ref=e140]: Workflow entry point
+      - generic [ref=e141]:
+        - generic [ref=e142]:
+          - generic [ref=e143]: Input variables
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]: 📝
+              - generic [ref=e147]: input_as_text
+              - generic [ref=e148]: string
+              - generic [ref=e149]: system
+            - paragraph [ref=e150]: User input automatically available to all nodes
+        - generic [ref=e151]:
+          - generic [ref=e152]: State variables
+          - paragraph [ref=e153]: Define custom variables for your workflow
+          - button "+ Add variable" [ref=e154]:
+            - generic [ref=e155]: +
+            - generic [ref=e156]: Add variable
+          - paragraph [ref=e158]: "💡 Tip: Variables allow you to pass dynamic data into your workflow"
+      - button "More options" [ref=e160]
+```

@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start": "node start.js",
+    "dev": "concurrently \"npm run dev:app\" \"npm run dev:tts\"",
+    "dev:app": "cd agent-builder && npm run dev",
+    "dev:tts": "node tts-server.js",
+    "tts": "node tts-server.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}
